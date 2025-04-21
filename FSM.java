@@ -30,6 +30,7 @@ public class FSM implements Serializable {
         this.initialState = state;
     }
 
+
     public void addFinalState(State state) {
         finalStates.add(state);
     }

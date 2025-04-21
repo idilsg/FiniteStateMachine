@@ -9,6 +9,7 @@ public class FSMApp {
         FSMRunner runner = new FSMRunner(fsm);
         FSMLogger logger = new FSMLogger();
 
+
         System.out.println("FSM DESIGNER 1.0 - Komutları giriniz ('EXIT;' ile çıkabilirsiniz)");
 
         while (true) {

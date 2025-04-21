@@ -10,6 +10,7 @@ public class FSMRunner {
         if (input == null || input.isEmpty()) {
             return "Hata: Boş giriş";
         }
+
         return fsm.execute(input); // FSM içindeki execute metodunu çalıştır
     }
     public void printFSM() {
