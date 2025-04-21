@@ -7,7 +7,13 @@ public class FSMRunner {
     }
 
     public String run(String input) {
+        if (input == null || input.isEmpty()) {
+            return "Hata: Boş giriş";
+        }
         return fsm.execute(input); // FSM içindeki execute metodunu çalıştır
+    }
+    public void printFSM() {
+        System.out.println(fsm.describe());
     }
 }
 

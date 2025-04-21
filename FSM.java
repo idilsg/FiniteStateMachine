@@ -1,13 +1,15 @@
 //FSM’nin tüm bileşenlerini (semboller, durumlar, geçişler) içeren sınıf.
-import java.io.Serializable;
+import java.io.Serializable;// FSMFileManager için gerekli
 import java.util.*;
 
 public class FSM implements Serializable {
-    private Set<State> states;  // FSM içindeki durumlar
-    private Set<Character> symbols;  // FSM'nin kabul ettiği semboller
+    private Set<State> states;  // FSM içindeki tanımlı tüm durumlar q0,q1
+    private Set<Character> symbols;  // FSM'nin kabul ettiği alfabetik semboller 0,1,a
     private Map<State, Map<Character, State>> transitions; // Geçişler (Durum -> (Sembol -> Sonraki Durum))
     private State initialState; // Başlangıç durumu
     private Set<State> finalStates; // Kabul durumları
+
+    // implements Serializabledeki amaç :  Nesne dosyaya yazılabilir (save/lad yapılabilir).
 
     public FSM() {
         this.states = new HashSet<>();
@@ -18,11 +20,11 @@ public class FSM implements Serializable {
 
     public void addState(State state) {
         states.add(state);
-    }
+    } // q0,q1
 
     public void addSymbol(char symbol) {
         symbols.add(symbol);
-    }
+    } // a,b,0,1
 
     public void setInitialState(State state) {
         this.initialState = state;
@@ -33,11 +35,19 @@ public class FSM implements Serializable {
     }
 
     public void addTransition(State from, char symbol, State to) {
-        transitions.putIfAbsent(from, new HashMap<>());
-        transitions.get(from).put(symbol, to);
+        Map<Character, State> map = transitions.get(from);
+        if (map == null) {
+            map = new HashMap<>();
+            transitions.put(from, map);
+        }
+        map.put(symbol, to);
     }
 
     public String execute(String input) {
+        if (initialState == null) {
+            return "Hata: Başlangıç durumu tanımlanmadı.";
+        }
+
         State currentState = initialState;
         StringBuilder stateSequence = new StringBuilder(currentState.getName());
 
@@ -55,4 +65,24 @@ public class FSM implements Serializable {
 
         return stateSequence.toString() + (finalStates.contains(currentState) ? " YES" : " NO");
     }
+
+    public String describe() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SEMBOLLER: ").append(symbols).append("\n");
+        sb.append("DURUMLAR: ").append(states).append("\n");
+        sb.append("BAŞLANGIÇ: ").append(initialState != null ? initialState : "Yok").append("\n");
+        sb.append("KABUL DURUMLARI: ").append(finalStates).append("\n");
+        sb.append("GEÇİŞLER:\n");
+
+        for (State from : transitions.keySet()) {
+            for (Map.Entry<Character, State> entry : transitions.get(from).entrySet()) {
+                sb.append("  ").append(from).append(" -- ").append(entry.getKey()).append(" --> ").append(entry.getValue()).append("\n");
+            }
+        }
+
+        return sb.toString();
+    }
+
+
+
 }
