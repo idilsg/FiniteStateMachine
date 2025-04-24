@@ -43,9 +43,9 @@ public class FSMParser {
             while ((line = reader.readLine()) != null) {
                 processCommand(line.trim());
             }
-            System.out.println("Dosya başarıyla yüklendi: " + filePath);
+            System.out.println("File successfully loaded: " + filePath);
         } catch (IOException e) {
-            System.out.println("Dosya okunurken hata oluştu: " + e.getMessage());
+            System.out.println("Error while reading file: " + e.getMessage());
         }
     }
 }

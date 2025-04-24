@@ -8,7 +8,7 @@ public class FSMRunner {
 
     public String run(String input) {
         if (input == null || input.isEmpty()) {
-            return "Hata: Boş giriş";
+            return "Error: Empty input";
         }
 
         return fsm.execute(input); // FSM içindeki execute metodunu çalıştır

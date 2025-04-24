@@ -9,8 +9,7 @@ public class FSMApp {
         FSMRunner runner = new FSMRunner(fsm);
         FSMLogger logger = new FSMLogger();
 
-
-        System.out.println("FSM DESIGNER 1.0 - Komutları giriniz ('EXIT;' ile çıkabilirsiniz)");
+        System.out.println("FSM DESIGNER 1.0 - Enter commands (use 'EXIT;' to quit)");
 
         while (true) {
             System.out.print("? ");
@@ -46,10 +45,9 @@ public class FSMApp {
                 parser.processCommand(input);
                 logger.log(input);
             } catch (Exception e) {
-                System.out.println("Hata: " + e.getMessage());
+                System.out.println("Error: " + e.getMessage());
             }
         }
-
         scanner.close();
     }
 }

@@ -9,7 +9,7 @@ public class FSM implements Serializable {
     private State initialState; // Başlangıç durumu
     private Set<State> finalStates; // Kabul durumları
 
-    // implements Serializabledeki amaç :  Nesne dosyaya yazılabilir (save/lad yapılabilir).
+    // implements Serializabledeki amaç :  Nesne dosyaya yazılabilir (save/load yapılabilir).
 
     public FSM() {
         this.states = new HashSet<>();
@@ -46,7 +46,7 @@ public class FSM implements Serializable {
 
     public String execute(String input) {
         if (initialState == null) {
-            return "Hata: Başlangıç durumu tanımlanmadı.";
+            return "Error: Initial state is not defined.";
         }
 
         State currentState = initialState;
@@ -54,7 +54,7 @@ public class FSM implements Serializable {
 
         for (char symbol : input.toCharArray()) {
             if (!symbols.contains(symbol)) {
-                return "Hata: Geçersiz sembol " + symbol;
+                return "Error: Invalid symbol " + symbol;
             }
             Map<Character, State> stateTransitions = transitions.get(currentState);
             if (stateTransitions == null || !stateTransitions.containsKey(symbol)) {
@@ -69,11 +69,11 @@ public class FSM implements Serializable {
 
     public String describe() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SEMBOLLER: ").append(symbols).append("\n");
-        sb.append("DURUMLAR: ").append(states).append("\n");
-        sb.append("BAŞLANGIÇ: ").append(initialState != null ? initialState : "Yok").append("\n");
-        sb.append("KABUL DURUMLARI: ").append(finalStates).append("\n");
-        sb.append("GEÇİŞLER:\n");
+        sb.append("SYMBOLS: ").append(symbols).append("\n");
+        sb.append("STATES: ").append(states).append("\n");
+        sb.append("INITIAL: ").append(initialState != null ? initialState : "None").append("\n");
+        sb.append("FINAL STATES: ").append(finalStates).append("\n");
+        sb.append("TRANSITIONS:\n");
 
         for (State from : transitions.keySet()) {
             for (Map.Entry<Character, State> entry : transitions.get(from).entrySet()) {

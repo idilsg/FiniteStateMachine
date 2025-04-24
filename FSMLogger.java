@@ -12,7 +12,7 @@ public class FSMLogger {
             loggingEnabled = true;
             System.out.println("LOGGING STARTED: " + filePath);
         } catch (IOException e) {
-            System.out.println("Log dosyası açılamadı: " + e.getMessage());
+            System.out.println("Failed to open log file: " + e.getMessage());
         }
     }
 
@@ -23,7 +23,7 @@ public class FSMLogger {
                 loggingEnabled = false;
                 System.out.println("STOPPED LOGGING");
             } catch (IOException e) {
-                System.out.println("Log dosyası kapatılamadı: " + e.getMessage());
+                System.out.println("Failed to close log file: " + e.getMessage());
             }
         } else {
             System.out.println("LOGGING was not enabled");
@@ -36,7 +36,7 @@ public class FSMLogger {
                 logFile.write(message + "\n");
                 logFile.flush();
             } catch (IOException e) {
-                System.out.println("Log dosyasına yazılamadı: " + e.getMessage());
+                System.out.println("Failed to write to log file: " + e.getMessage());
             }
         }
     }
