@@ -30,6 +30,25 @@ public class FSM implements Serializable {
         this.initialState = state;
     }
 
+    public Set<Character> getSymbols() {
+        return symbols;
+    }
+
+    public String describeSymbols() {
+        return symbols.toString();
+    }
+
+    public Set<State> getStates() {
+        return states;
+    }
+
+    public State getInitialState() {
+        return initialState;
+    }
+
+    public Set<State> getFinalStates() {
+        return finalStates;
+    }
 
     public void addFinalState(State state) {
         finalStates.add(state);

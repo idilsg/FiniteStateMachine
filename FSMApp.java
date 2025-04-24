@@ -51,7 +51,14 @@ public class FSMApp {
             }
 
             try {
-                parser.processCommand(input);
+                // remove anything after the semicolon (command terminator or comment start)
+                String cleaned = input.split(";")[0].trim();
+
+                // only process if something is left after trimming
+                if (!cleaned.isEmpty()) {
+                    parser.processCommand(cleaned);
+                }
+
                 logger.log(input);
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
