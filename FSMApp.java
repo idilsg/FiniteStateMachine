@@ -1,15 +1,24 @@
 //main classı
 import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class FSMApp {
     public static void main(String[] args) {
+
+        String versionNo = "1.0"; // You can change this to match GitHub version if needed
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        if (args.length == 0) {
+            System.out.println("FSM DESIGNER " + versionNo + " - " + now.format(formatter));
+        }
+
         Scanner scanner = new Scanner(System.in);
         FSM fsm = new FSM();
         FSMParser parser = new FSMParser(fsm);
         FSMRunner runner = new FSMRunner(fsm);
         FSMLogger logger = new FSMLogger();
-
-        System.out.println("FSM DESIGNER 1.0 - Enter commands (use 'EXIT;' to quit)");
 
         while (true) {
             System.out.print("? ");
