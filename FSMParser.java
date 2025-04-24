@@ -81,13 +81,60 @@ public class FSMParser {
                 break;
 
             case "INITIAL-STATE":
-                fsm.setInitialState(new State(parts[1]));
+                if (parts.length != 2) {
+                    System.out.println("Warning: INITIAL-STATE command must be followed by a single valid state name.");
+                    break;
+                }
+
+                String initName = parts[1];
+
+                // check if name is alphanumeric
+                if (!initName.matches("[a-zA-Z0-9]+")) {
+                    System.out.println("Warning: Invalid state name '" + initName + "' (must be alphanumeric)");
+                    break;
+                }
+
+                State initState = new State(initName.toLowerCase());
+
+                // if the state does not exist yet, add it with a warning
+                if (!fsm.getStates().contains(initState)) {
+                    fsm.addState(initState);
+                    System.out.println("Warning: State '" + initName + "' was not declared before. It has been added.");
+                }
+
+                fsm.setInitialState(initState);
                 break;
+
             case "FINAL-STATES":
+                if (parts.length == 1) {
+                    System.out.println("Warning: FINAL-STATES command requires at least one valid state name.");
+                    break;
+                }
+
                 for (int i = 1; i < parts.length; i++) {
-                    fsm.addFinalState(new State(parts[i]));
+                    String name = parts[i];
+
+                    // check if name is alphanumeric
+                    if (!name.matches("[a-zA-Z0-9]+")) {
+                        System.out.println("Warning: Invalid state name '" + name + "' (must be alphanumeric)");
+                        continue;
+                    }
+
+                    State state = new State(name.toLowerCase());
+
+                    // add to FSM if not declared
+                    if (!fsm.getStates().contains(state)) {
+                        fsm.addState(state);
+                        System.out.println("Warning: State '" + name + "' was not declared before. It has been added.");
+                    }
+
+                    // warn if already a final state
+                    if (!fsm.getFinalStates().add(state)) {
+                        System.out.println("Warning: State '" + name + "' is already a final state.");
+                    }
                 }
                 break;
+
             case "EXECUTE":
                 System.out.println(fsm.execute(parts[1]));
                 break;
