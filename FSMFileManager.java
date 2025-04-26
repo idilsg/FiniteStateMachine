@@ -25,6 +25,23 @@ public class FSMFileManager {
             return null;
         }
     }
+    // COMPILE command: serialize FSM into a binary file
+    public static void compileFSM(FSM fsm, String filename) {
+        if (filename == null || filename.isEmpty()) {
+            System.out.println("Error: Filename is missing. Usage: COMPILE filename");
+            return;
+        }
 
+        if (!filename.endsWith(".bin")) {
+            System.out.println("Error: Invalid filename. The compiled file must have a .bin extension.");
+            return;
+        }
 
+        File file = new File(filename);
+        if (file.exists()) {
+            System.out.println("Warning: File already exists and will be overwritten: " + filename);
+        }
+
+        saveFSM(fsm, filename);
+    }
 }

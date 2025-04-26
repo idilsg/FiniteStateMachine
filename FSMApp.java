@@ -49,6 +49,15 @@ public class FSMApp {
                 }
                 continue;
             }
+            if (input.startsWith("COMPILE ")) {
+                String[] parts = input.split(" ");
+                if (parts.length == 2) {
+                    FSMFileManager.compileFSM(fsm, parts[1]);
+                } else {
+                    System.out.println("Error: Invalid COMPILE command. Usage: COMPILE filename.bin");
+                }
+                continue;
+            }
 
             try {
                 // remove anything after the semicolon (command terminator or comment start)

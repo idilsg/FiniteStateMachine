@@ -6,7 +6,9 @@ import java.io.IOException;
 public class FSMLogger {
     private BufferedWriter logFile;
     private boolean loggingEnabled = false;
-
+    public boolean isLoggingEnabled() {
+        return loggingEnabled;
+    }
     public void startLogging(String filePath) {
         try {
             if (logFile != null) { //close the open ones
@@ -23,12 +25,19 @@ public class FSMLogger {
 
     public void stopLogging() {
         if (loggingEnabled) {
-            try {
-                logFile.close();
+            if (logFile != null) {
+                try {
+                    logFile.close();
+                    System.out.println("STOPPED LOGGING");
+                } catch (IOException e) {
+                    reportError("Log file couldn't be closed: " + e.getMessage());
+                } finally {
+                    loggingEnabled = false;
+                    logFile = null;
+                }
+            } else {
+                System.out.println("No log file to close.");
                 loggingEnabled = false;
-                System.out.println("STOPPED LOGGING");
-            } catch (IOException e) {
-                reportError("Log file couln't closed: " + e.getMessage());
             }
         } else {
             System.out.println("LOGGING was not enabled");
