@@ -1,21 +1,30 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FSMFileManager {
-    public static void saveFSM(FSM fsm, String filePath) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            out.writeObject(fsm);
-            System.out.println("FSM successfully saved: " + filePath);
+
+    // Sve as serializeble
+    public static void saveFSM(FSM fsm, String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(fsm);
+            System.out.println("FSM saved to " + filename);
         } catch (IOException e) {
-            System.out.println("Error while saving FSM: " + e.getMessage());
+            System.out.println("Error: Cannot save FSM. " + e.getMessage());
         }
     }
 
-    public static FSM loadFSM(String filePath) {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
-            return (FSM) in.readObject();
+    // load FSM from file
+    public static FSM loadFSM(String filename) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            FSM fsm = (FSM) ois.readObject();
+            System.out.println("FSM loaded from " + filename);
+            return fsm;
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Error while loading FSM: " + e.getMessage());
+            System.out.println("Error: Cannot load FSM. " + e.getMessage());
             return null;
         }
     }
+
+
 }
