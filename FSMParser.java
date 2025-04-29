@@ -32,7 +32,7 @@ public class FSMParser {
                         System.out.println("Warning: Invalid symbol '" + symbol + "' ignored (non-alphanumeric)");
                     }
                     // try to add the symbol in lowercase (case-insensitive check)
-                    else if (!fsm.getSymbols().add(Character.toLowerCase(symbol))) {
+                    else if (!fsm.getSymbols().add(Character.valueOf(Character.toLowerCase(symbol)))) {
                         System.out.println("Warning: Duplicate symbol '" + symbol + "'");
                     }
                 }

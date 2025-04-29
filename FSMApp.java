@@ -1,4 +1,3 @@
-//main classı
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -6,13 +5,12 @@ import java.time.format.DateTimeFormatter;
 public class FSMApp {
     public static void main(String[] args) {
 
-        String versionNo = "1.0"; // You can change this to match GitHub version if needed
+        String versionNo = "1.0"; // Projenin sürüm numarası
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        if (args.length == 0) {
-            System.out.println("FSM DESIGNER " + versionNo + " - " + now.format(formatter));
-        }
+        // Başlangıç Mesajı
+        System.out.println("FSM DESIGNER " + versionNo + " - " + now.format(formatter));
 
         Scanner scanner = new Scanner(System.in);
         FSM fsm = new FSM();
@@ -24,56 +22,79 @@ public class FSMApp {
             System.out.print("? ");
             String input = scanner.nextLine().trim();
 
-            if (input.equalsIgnoreCase("EXIT;")) {
-                System.out.println("TERMINATED BY USER");
-                logger.stopLogging(); // Loglama kapat
-                break;
-            }
-
-            if (input.startsWith("LOG ")) {
-                String[] parts = input.split(" ");
-                if (parts.length == 2) {
-                    logger.startLogging(parts[1]);
-                } else {
-                    logger.stopLogging();
-                }
+            // Boş input kontrolü
+            if (input.isEmpty()) {
                 continue;
             }
 
-            if (input.startsWith("EXECUTE ")) {
-                String[] parts = input.split(" ");
-                if (parts.length == 2) {
-                    String result = runner.run(parts[1]);
-                    System.out.println(result);
-                    logger.log(result);
-                }
-                continue;
-            }
-            if (input.startsWith("COMPILE ")) {
-                String[] parts = input.split(" ");
-                if (parts.length == 2) {
-                    FSMFileManager.compileFSM(fsm, parts[1]);
-                } else {
-                    System.out.println("Error: Invalid COMPILE command. Usage: COMPILE filename.bin");
-                }
-                continue;
-            }
+            // Noktalı virgül sonrası temizle
+            input = input.split(";")[0].trim();
 
             try {
-                // remove anything after the semicolon (command terminator or comment start)
-                String cleaned = input.split(";")[0].trim();
-
-                // only process if something is left after trimming
-                if (!cleaned.isEmpty()) {
-                    parser.processCommand(cleaned);
+                if (input.equalsIgnoreCase("EXIT")) {
+                    System.out.println("TERMINATED BY USER");
+                    logger.stopLogging();
+                    break;
                 }
 
+                if (input.equalsIgnoreCase("HELP")) {
+                    System.out.println("Available commands:");
+                    System.out.println("  SYMBOLS [symbol1 symbol2 ...]");
+                    System.out.println("  STATES [state1 state2 ...]");
+                    System.out.println("  INITIAL-STATE [state]");
+                    System.out.println("  FINAL-STATES [state1 state2 ...]");
+                    System.out.println("  TRANSITIONS [symbol current_state next_state, ...]");
+                    System.out.println("  EXECUTE [input_string]");
+                    System.out.println("  PRINT");
+                    System.out.println("  LOG [filename]");
+                    System.out.println("  LOAD [filename]");
+                    System.out.println("  COMPILE [filename]");
+                    System.out.println("  CLEAR");
+                    System.out.println("  EXIT");
+                    continue;
+                }
+
+                if (input.startsWith("LOG ")) {
+                    String[] parts = input.split(" ");
+                    if (parts.length == 2) {
+                        logger.startLogging(parts[1]);
+                    } else {
+                        logger.stopLogging();
+                    }
+                    continue;
+                }
+
+                if (input.startsWith("EXECUTE ")) {
+                    String[] parts = input.split(" ");
+                    if (parts.length == 2) {
+                        String result = runner.run(parts[1]);
+                        System.out.println(result);
+                        logger.log(result);
+                    } else {
+                        System.out.println("Error: Invalid EXECUTE command. Usage: EXECUTE input_string");
+                    }
+                    continue;
+                }
+
+                if (input.startsWith("COMPILE ")) {
+                    String[] parts = input.split(" ");
+                    if (parts.length == 2) {
+                        FSMFileManager.compileFSM(fsm, parts[1]);
+                    } else {
+                        System.out.println("Error: Invalid COMPILE command. Usage: COMPILE filename.bin");
+                    }
+                    continue;
+                }
+
+                // Diğer her şey FSMParser'a gönderiliyor
+                parser.processCommand(input);
                 logger.log(input);
+
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
         }
+
         scanner.close();
     }
 }
-
