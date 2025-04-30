@@ -20,27 +20,40 @@ public class FSMParser {
         switch (parts[0].toUpperCase()) {
 
             case "SYMBOLS":
+                // if no symbols are provided, print the existing symbol list
                 if (parts.length == 1) {
                     System.out.println("Current Symbols: " + fsm.describeSymbols());
                     break;
                 }
+
+                // loop each symbol argument
                 for (int i = 1; i < parts.length; i++) {
-                    char symbol = parts[i].charAt(0);
+                    char symbol = parts[i].charAt(0); // get the first character of each entry
+
+                    // if symbol is alphanumeric (letters and digits only)
                     if (!Character.isLetterOrDigit(symbol)) {
                         System.out.println("Warning: Invalid symbol '" + symbol + "' ignored");
-                    } else if (!fsm.addSymbol(symbol)) {
+                    }
+                    // try to add the symbol in lowercase (case-insensitive check)
+                    else if (!fsm.addSymbol(symbol)) {
                         System.out.println("Warning: Duplicate symbol '" + symbol + "'");
                     }
                 }
                 break;
 
             case "STATES":
+                // if no states provided, print all current states and mark initial/final
                 if (parts.length == 1) {
+                    // STATES q0 q1 olduğunda, parts[0] = STATES oluyor
+                    // o yüzden parts[1] ile başlıyoruz
                     System.out.println("Current States:");
+                    // convert the set to a list and sort alphabetically by state name
                     List<State> sortedStates = new ArrayList<>(fsm.getStates());
                     sortedStates.sort(Comparator.comparing(State::getName));
+
+                    // loop through each state already stored in FSM
                     for (State s : sortedStates) {
-                        String tag = "";
+                        String tag = ""; // tag = initial veya final
                         if (s.equals(fsm.getInitialState())) tag += " [initial]";
                         if (fsm.getFinalStates().contains(s)) tag += " [final]";
                         System.out.println("  " + s.getName() + tag);
@@ -49,14 +62,20 @@ public class FSMParser {
                 }
                 for (int i = 1; i < parts.length; i++) {
                     String name = parts[i];
+
+                    // check if alphanumeric
                     if (!name.matches("[a-zA-Z0-9]+")) {
-                        System.out.println("Warning: Invalid state name '" + name + "'");
+                        System.out.println("Warning: Invalid state name '" + name + "' (must be alphanumeric)");
                         continue;
                     }
                     State newState = new State(name.toLowerCase());
+
+                    // Check for duplicates
                     if (!fsm.getStates().add(newState)) {
-                        System.out.println("Warning: Duplicate state '" + name + "'");
-                    } else if (fsm.getInitialState() == null) {
+                        System.out.println("Warning: Duplicate state '" + name + "' already declared");
+                    }
+                    // First added state becomes initial state if none is set
+                    else if (fsm.getInitialState() == null) {
                         fsm.setInitialState(newState);
                     }
                 }
@@ -68,11 +87,15 @@ public class FSMParser {
                     break;
                 }
                 String initName = parts[1];
+
+                // check if name is alphanumeric
                 if (!initName.matches("[a-zA-Z0-9]+")) {
-                    System.out.println("Warning: Invalid state name '" + initName + "'");
+                    System.out.println("Warning: Invalid state name '" + initName + "' (must be alphanumeric)");
                     break;
                 }
                 State initState = new State(initName.toLowerCase());
+
+                // if the state does not exist yet, add it with a warning
                 if (!fsm.getStates().contains(initState)) {
                     fsm.addState(initState);
                     System.out.println("Warning: State '" + initName + "' was not declared before. It has been added.");
@@ -87,15 +110,21 @@ public class FSMParser {
                 }
                 for (int i = 1; i < parts.length; i++) {
                     String name = parts[i];
+
+                    // check if name is alphanumeric
                     if (!name.matches("[a-zA-Z0-9]+")) {
-                        System.out.println("Warning: Invalid state name '" + name + "'");
+                        System.out.println("Warning: Invalid state name '" + name + "' (must be alphanumeric)");
                         continue;
                     }
                     State s = new State(name.toLowerCase());
+
+                    // add to FSM if not declared
                     if (!fsm.getStates().contains(s)) {
                         fsm.addState(s);
                         System.out.println("Warning: State '" + name + "' was not declared before. It has been added.");
                     }
+
+                    // warn if already a final state
                     if (!fsm.getFinalStates().add(s)) {
                         System.out.println("Warning: State '" + name + "' is already a final state.");
                     }

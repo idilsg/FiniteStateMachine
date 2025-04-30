@@ -1,5 +1,8 @@
-import java.io.Serializable;
+// FSM’nin tüm bileşenlerini (semboller, durumlar, geçişler) içeren sınıf
+import java.io.Serializable; // FSMFileManager için gerekli
 import java.util.*;
+
+// implements Serializabledeki amaç :  Nesne dosyaya yazılabilir (save/load yapılabilir)
 
 public class FSM implements Serializable {
     private Set<State> states;                      // Durumlar kümesi
@@ -16,7 +19,7 @@ public class FSM implements Serializable {
     }
 
     // ----- SYMBOL işlemleri -----
-    public boolean addSymbol(char symbol) {
+    public boolean addSymbol(char symbol) { // a,b,0,1
         if (!Character.isLetterOrDigit(symbol)) {
             return false;
         }
@@ -32,7 +35,7 @@ public class FSM implements Serializable {
     }
 
     // ----- STATE işlemleri -----
-    public void addState(State state) {
+    public void addState(State state) { // q0,q1
         states.add(state);
     }
 
