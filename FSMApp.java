@@ -1,10 +1,8 @@
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 public class FSMApp {
     public static void main(String[] args) {
-
         String versionNo = "1.0"; // Projenin sürüm numarası
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -17,6 +15,9 @@ public class FSMApp {
         FSMParser parser = new FSMParser(fsm);
         FSMRunner runner = new FSMRunner(fsm);
         FSMLogger logger = new FSMLogger();
+
+
+
 
         // if started with an argument load the file
         if (args.length > 0) {
@@ -110,7 +111,6 @@ public class FSMApp {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-
         scanner.close();
     }
 }
