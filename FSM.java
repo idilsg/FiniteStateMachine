@@ -1,4 +1,5 @@
 // FSM’nin tüm bileşenlerini (semboller, durumlar, geçişler) içeren sınıf
+
 import java.io.Serializable; // FSMFileManager için gerekli
 import java.util.*;
 

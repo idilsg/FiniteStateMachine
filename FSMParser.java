@@ -1,4 +1,5 @@
 //Kullanıcının girdiği komutları ayrıştıran ve yorumlayan sınıf.
+
 import java.io.*;
 import java.util.Comparator;
 import java.util.List;
@@ -230,6 +231,7 @@ public class FSMParser {
                 System.out.println("Error: Unknown command");
         }
     }
+
     public void loadFromFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;

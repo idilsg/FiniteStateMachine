@@ -1,4 +1,5 @@
 //FSM içindeki her durumu temsil eden sınıf.
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -30,5 +31,4 @@ public class State implements Serializable {
     public String toString() {
         return name;
     }
-
 }
