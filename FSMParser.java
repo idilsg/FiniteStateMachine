@@ -136,6 +136,8 @@ public class FSMParser {
                     System.out.println("Warning: No transitions specified.");
                     break;
                 }
+
+                // parse transitions list from the rest of the line
                 String full = command.substring("TRANSITIONS".length()).trim();
                 String[] transitions = full.split(",");
                 for (String t : transitions) {
@@ -147,20 +149,28 @@ public class FSMParser {
                     char symbol = tParts[0].charAt(0);
                     String from = tParts[1].toLowerCase();
                     String to = tParts[2].toLowerCase();
+
+                    // validate symbol
                     if (!Character.isLetterOrDigit(symbol)) {
                         System.out.println("Warning: Invalid symbol '" + symbol + "'");
                         continue;
                     }
                     State fromState = new State(from);
                     State toState = new State(to);
+
+                    // add undeclared from-state
                     if (!fsm.getStates().contains(fromState)) {
                         fsm.addState(fromState);
                         System.out.println("Warning: State '" + from + "' was not declared before. It has been added.");
                     }
+
+                    // add undeclared to-state
                     if (!fsm.getStates().contains(toState)) {
                         fsm.addState(toState);
                         System.out.println("Warning: State '" + to + "' was not declared before. It has been added.");
                     }
+
+                    // add transition components
                     fsm.addSymbol(symbol);
                     fsm.addTransition(fromState, symbol, toState);
                 }
@@ -181,6 +191,8 @@ public class FSMParser {
                     break;
                 }
                 String filename = parts[1];
+
+                // load based on file type
                 if (filename.endsWith(".bin")) {
                     FSM loadedFSM = FSMFileManager.loadFSM(filename);
                     if (loadedFSM != null) {
@@ -197,6 +209,8 @@ public class FSMParser {
                     System.out.println("Error: EXECUTE requires an input string.");
                     break;
                 }
+
+                // run FSM with given input string
                 System.out.println(fsm.execute(parts[1]));
                 break;
 
