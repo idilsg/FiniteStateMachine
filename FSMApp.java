@@ -18,6 +18,22 @@ public class FSMApp {
         FSMRunner runner = new FSMRunner(fsm);
         FSMLogger logger = new FSMLogger();
 
+        // if started with an argument load the file
+        if (args.length > 0) {
+            String inputFile = args[0];
+            if (inputFile.endsWith(".bin")) {
+                FSM loaded = FSMFileManager.loadFSM(inputFile);
+                if (loaded != null) {
+                    fsm = loaded;
+                    parser = new FSMParser(fsm);
+                    runner = new FSMRunner(fsm);
+                    System.out.println("FSM loaded from binary file: " + inputFile);
+                }
+            } else {
+                parser.loadFromFile(inputFile);
+            }
+        }
+
         while (true) {
             System.out.print("? ");
             String input = scanner.nextLine().trim();

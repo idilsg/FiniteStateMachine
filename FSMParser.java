@@ -1,7 +1,5 @@
 //Kullanıcının girdiği komutları ayrıştıran ve yorumlayan sınıf.
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
@@ -177,8 +175,22 @@ public class FSMParser {
                 break;
 
             case "PRINT":
-                System.out.println(fsm.describe());
+                if (parts.length == 1) {
+                    System.out.println(fsm.describe());
+                } else if (parts.length == 2) {
+                    String outFile = parts[1];
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
+                        writer.write(fsm.describe());
+                        writer.flush();
+                        System.out.println("FSM written to " + outFile);
+                    } catch (IOException e) {
+                        System.out.println("Error: Could not write to file " + outFile + ": " + e.getMessage());
+                    }
+                } else {
+                    System.out.println("Error: Invalid PRINT command. Usage: PRINT [optional_filename]");
+                }
                 break;
+
 
             case "CLEAR":
                 fsm = new FSM();
