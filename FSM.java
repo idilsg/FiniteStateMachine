@@ -26,6 +26,17 @@ public class FSM implements Serializable {
         }
         return symbols.add(Character.toLowerCase(symbol));  // küçük harf olarak ekleniyor
     }
+    // transitionda varlık kontrolü için gerekti
+    public void addTransition(char symbol, State from, State to) {
+        if (!symbols.contains(symbol)) {
+            throw new IllegalArgumentException("Symbol '" + symbol + "' is not defined in FSM.");
+        }
+        if (!states.contains(from) || !states.contains(to)) {
+            throw new IllegalArgumentException("Both source and destination states must be defined.");
+        }
+        transitions.putIfAbsent(from, new HashMap<>());
+        transitions.get(from).put(symbol, to);
+    }
 
     public Set<Character> getSymbols() {
         return new HashSet<>(symbols); // dışarıya kopya ver

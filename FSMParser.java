@@ -140,6 +140,44 @@ public class FSMParser {
                 }
                 break;
 
+
+            case "TRANSITIONS":
+                if (parts.length == 1) {
+                    System.out.println("Error: TRANSITIONS command requires at least one transition.");
+                    break;
+                }
+
+                for (int i = 1; i < parts.length; i++) {
+                    String[] triple = parts[i].split(",");
+                    if (triple.length != 3) {
+                        System.out.println("Warning: Invalid transition format. ");
+                        continue;
+                    }
+
+                    char symbol = triple[0].trim().charAt(0);
+                    String fromStateName = triple[1].trim().toLowerCase();
+                    String toStateName = triple[2].trim().toLowerCase();
+
+                    State from = new State(fromStateName);
+                    State to = new State(toStateName);
+
+                    if (!fsm.getStates().contains(from)) {
+                        System.out.println("Error: State '" + fromStateName + "' is not defined.");
+                        continue;
+                    }
+                    if (!fsm.getStates().contains(to)) {
+                        System.out.println("Error: State '" + toStateName + "' is not defined.");
+                        continue;
+                    }
+                    if (!fsm.getSymbols().contains(symbol)) {
+                        System.out.println("Error: Symbol '" + symbol + "' is not defined.");
+                        continue;
+                    }
+
+                    fsm.addTransition(symbol, from, to);
+                }
+                break;
+
             case "EXECUTE":
                 System.out.println(fsm.execute(parts[1]));
                 break;
