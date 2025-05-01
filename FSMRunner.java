@@ -1,4 +1,5 @@
 // FSM’yi bir giriş dizesi üzerinde çalıştıran sınıf.
+
 public class FSMRunner {
     private FSM fsm;
 
@@ -13,8 +14,8 @@ public class FSMRunner {
 
         return fsm.execute(input); // FSM içindeki execute metodunu çalıştır
     }
+
     public void printFSM() {
         System.out.println(fsm.describe());
     }
 }
-

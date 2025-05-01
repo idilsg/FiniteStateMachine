@@ -1,15 +1,16 @@
-//FSM’nin tüm bileşenlerini (semboller, durumlar, geçişler) içeren sınıf.
-import java.io.Serializable;// FSMFileManager için gerekli
+// FSM’nin tüm bileşenlerini (semboller, durumlar, geçişler) içeren sınıf
+
+import java.io.Serializable; // FSMFileManager için gerekli
 import java.util.*;
 
-public class FSM implements Serializable {
-    private Set<State> states;  // FSM içindeki tanımlı tüm durumlar q0,q1
-    private Set<Character> symbols;  // FSM'nin kabul ettiği alfabetik semboller 0,1,a
-    private Map<State, Map<Character, State>> transitions; // Geçişler (Durum -> (Sembol -> Sonraki Durum))
-    private State initialState; // Başlangıç durumu
-    private Set<State> finalStates; // Kabul durumları
+// implements Serializabledeki amaç :  Nesne dosyaya yazılabilir (save/load yapılabilir)
 
-    // implements Serializabledeki amaç :  Nesne dosyaya yazılabilir (save/load yapılabilir).
+public class FSM implements Serializable {
+    private Set<State> states;                      // Durumlar kümesi
+    private Set<Character> symbols;                 // Semboller kümesi
+    private Map<State, Map<Character, State>> transitions;  // Geçişler
+    private State initialState;                     // Başlangıç durumu
+    private Set<State> finalStates;                 // Kabul durumları
 
     public FSM() {
         this.states = new HashSet<>();
@@ -18,42 +19,48 @@ public class FSM implements Serializable {
         this.finalStates = new HashSet<>();
     }
 
-    public void addState(State state) {
-        states.add(state);
-    } // q0,q1
-
-    public void addSymbol(char symbol) {
-        symbols.add(symbol);
-    } // a,b,0,1
-
-    public void setInitialState(State state) {
-        this.initialState = state;
+    // ----- SYMBOL işlemleri -----
+    public boolean addSymbol(char symbol) { // a,b,0,1
+        if (!Character.isLetterOrDigit(symbol)) {
+            return false;
+        }
+        return symbols.add(Character.toLowerCase(symbol));  // küçük harf olarak ekleniyor
     }
 
     public Set<Character> getSymbols() {
-        return symbols;
+        return new HashSet<>(symbols); // dışarıya kopya ver
     }
 
     public String describeSymbols() {
         return symbols.toString();
     }
 
+    // ----- STATE işlemleri -----
+    public void addState(State state) { // q0,q1
+        states.add(state);
+    }
+
     public Set<State> getStates() {
         return states;
+    }
+
+    public void setInitialState(State state) {
+        this.initialState = state;
     }
 
     public State getInitialState() {
         return initialState;
     }
 
-    public Set<State> getFinalStates() {
-        return finalStates;
-    }
-
     public void addFinalState(State state) {
         finalStates.add(state);
     }
 
+    public Set<State> getFinalStates() {
+        return finalStates;
+    }
+
+    // ----- TRANSITION işlemleri -----
     public void addTransition(State from, char symbol, State to) {
         Map<Character, State> map = transitions.get(from);
         if (map == null) {
@@ -63,29 +70,37 @@ public class FSM implements Serializable {
         map.put(symbol, to);
     }
 
+    // ----- FSM Çalıştırma -----
     public String execute(String input) {
         if (initialState == null) {
             return "Error: Initial state is not defined.";
         }
 
         State currentState = initialState;
-        StringBuilder stateSequence = new StringBuilder(currentState.getName());
+        StringBuilder sequence = new StringBuilder(currentState.getName());
 
         for (char symbol : input.toCharArray()) {
             if (!symbols.contains(symbol)) {
                 return "Error: Invalid symbol " + symbol;
             }
-            Map<Character, State> stateTransitions = transitions.get(currentState);
-            if (stateTransitions == null || !stateTransitions.containsKey(symbol)) {
-                return stateSequence.toString() + " NO";
+
+            Map<Character, State> trans = transitions.get(currentState);
+            if (trans == null || !trans.containsKey(symbol)) {
+                return sequence.toString() + " NO";
             }
-            currentState = stateTransitions.get(symbol);
-            stateSequence.append(" ").append(currentState.getName());
+
+            currentState = trans.get(symbol);
+            sequence.append(" ").append(currentState.getName());
         }
 
-        return stateSequence.toString() + (finalStates.contains(currentState) ? " YES" : " NO");
+        if (finalStates.contains(currentState)) {
+            return sequence.toString() + " YES";
+        } else {
+            return sequence.toString() + " NO";
+        }
     }
 
+    // ----- Yazdırılabilir Açıklama -----
     public String describe() {
         StringBuilder sb = new StringBuilder();
         sb.append("SYMBOLS: ").append(symbols).append("\n");
@@ -96,13 +111,11 @@ public class FSM implements Serializable {
 
         for (State from : transitions.keySet()) {
             for (Map.Entry<Character, State> entry : transitions.get(from).entrySet()) {
-                sb.append("  ").append(from).append(" -- ").append(entry.getKey()).append(" --> ").append(entry.getValue()).append("\n");
+                sb.append("  ").append(from).append(" -- ").append(entry.getKey())
+                        .append(" --> ").append(entry.getValue()).append("\n");
             }
         }
 
         return sb.toString();
     }
-
-
-
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class FSMFileManager {
 
-    // Sve as serializeble
+    // Save as serializable
     public static void saveFSM(FSM fsm, String filename) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(fsm);
@@ -25,6 +25,7 @@ public class FSMFileManager {
             return null;
         }
     }
+
     // COMPILE command: serialize FSM into a binary file
     public static void compileFSM(FSM fsm, String filename) {
         if (filename == null || filename.isEmpty()) {

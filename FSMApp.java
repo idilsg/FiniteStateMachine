@@ -3,20 +3,36 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class FSMApp {
-    public static void main(String[] args) {
+    public static final String VERSION = "1.0";
 
-        String versionNo = "1.0"; // Projenin sürüm numarası
+    public static void main(String[] args) {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        // Başlangıç Mesajı
-        System.out.println("FSM DESIGNER " + versionNo + " - " + now.format(formatter));
+        // başlangıç mesajı
+        System.out.println("FSM DESIGNER " + VERSION + " - " + now.format(formatter));
 
         Scanner scanner = new Scanner(System.in);
         FSM fsm = new FSM();
         FSMParser parser = new FSMParser(fsm);
         FSMRunner runner = new FSMRunner(fsm);
         FSMLogger logger = new FSMLogger();
+
+        // if started with an argument load the file
+        if (args.length > 0) {
+            String inputFile = args[0];
+            if (inputFile.endsWith(".bin")) {
+                FSM loaded = FSMFileManager.loadFSM(inputFile);
+                if (loaded != null) {
+                    fsm = loaded;
+                    parser = new FSMParser(fsm);
+                    runner = new FSMRunner(fsm);
+                    System.out.println("FSM loaded from binary file: " + inputFile);
+                }
+            } else {
+                parser.loadFromFile(inputFile);
+            }
+        }
 
         while (true) {
             System.out.print("? ");
@@ -97,7 +113,6 @@ public class FSMApp {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-
         scanner.close();
     }
 }

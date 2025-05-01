@@ -1,4 +1,3 @@
-//
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -6,9 +5,11 @@ import java.io.IOException;
 public class FSMLogger {
     private BufferedWriter logFile;
     private boolean loggingEnabled = false;
+
     public boolean isLoggingEnabled() {
         return loggingEnabled;
     }
+
     public void startLogging(String filePath) {
         try {
             if (logFile != null) { //close the open ones
@@ -18,7 +19,7 @@ public class FSMLogger {
             loggingEnabled = true;
             System.out.println("LOGGING STARTED: " + filePath);
         } catch (IOException e) {
-            reportError("log file could not be opened: " + e.getMessage());
+            reportError("Log file could not be opened: " + e.getMessage());
             loggingEnabled = false;
         }
     }
@@ -51,10 +52,12 @@ public class FSMLogger {
                 logFile.newLine();
                 logFile.flush();
             } catch (IOException e) {
-                reportError("Log file coudn't writen: " + e.getMessage());
+                reportError("Log file couldn't written: " + e.getMessage());
             }
         }
-    }private void reportError(String errorMessage) {
+    }
+
+    private void reportError(String errorMessage) {
         System.out.println("Error: " + errorMessage);
     }
 }
