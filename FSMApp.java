@@ -21,7 +21,10 @@ public class FSMApp {
         while (true) {
             System.out.print("? ");
             String input = scanner.nextLine().trim();
-
+            if (!input.endsWith(";")) {
+                System.out.println("Error: Command must end with ';'");
+                continue;
+            }
             // Boş input kontrolü
             if (input.isEmpty()) {
                 continue;

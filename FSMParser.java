@@ -14,8 +14,12 @@ public class FSMParser {
     }
 
     public void processCommand(String command) {
+        command = command.trim();
+
+
         String[] parts = command.split(" ");
-        switch (parts[0]) {
+
+        switch (parts[0].toUpperCase()) {
             case "SYMBOLS":
                 // if no symbols are provided, print the existing symbol list
                 if (parts.length == 1) {
@@ -94,6 +98,7 @@ public class FSMParser {
                     break;
                 }
 
+
                 State initState = new State(initName.toLowerCase());
 
                 // if the state does not exist yet, add it with a warning
@@ -137,6 +142,10 @@ public class FSMParser {
 
             case "EXECUTE":
                 System.out.println(fsm.execute(parts[1]));
+                break;
+            default:
+                System.out.println("Error: Unknown command -> " + parts[0]);
+                System.out.println("Valid commands are: SYMBOLS, STATES, INITIAL-STATE, FINAL-STATES, EXECUTE");
                 break;
         }
     }

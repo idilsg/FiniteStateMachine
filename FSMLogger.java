@@ -58,3 +58,21 @@ public class FSMLogger {
         System.out.println("Error: " + errorMessage);
     }
 }
+
+// read log yapılırsa eklemesi
+//public void readLog() {
+//        if (logFilePath == null) {
+//            System.out.println("No log file available to read.");
+//            return;
+//        }
+//
+//        try (BufferedReader reader = new BufferedReader(new FileReader(logFilePath))) {
+//            String line;
+//            System.out.println("=== Log File Contents ===");
+//            while ((line = reader.readLine()) != null) {
+//                System.out.println(line);
+//            }
+//        } catch (IOException e) {
+//            reportError("Could not read log file: " + e.getMessage());
+//        }
+//    }
