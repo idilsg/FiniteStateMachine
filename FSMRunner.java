@@ -19,4 +19,3 @@ public class FSMRunner {
         System.out.println(fsm.describe());
     }
 }
-
