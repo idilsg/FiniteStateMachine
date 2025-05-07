@@ -3,8 +3,8 @@
 import java.io.Serializable; // FSMFileManager için gerekli
 import java.util.*;
 
-// implements Serializabledeki amaç :  Nesne dosyaya yazılabilir (save/load yapılabilir)
 
+// implements Serializabledeki amaç :  Nesne dosyaya yazılabilir (save/load yapılabilir)
 public class FSM implements Serializable {
     private Set<State> states;                      // Durumlar kümesi
     private Set<Character> symbols;                 // Semboller kümesi
@@ -110,7 +110,6 @@ public class FSM implements Serializable {
             return sequence.toString() + " NO";
         }
     }
-
     // ----- Yazdırılabilir Açıklama -----
     public String describe() {
         StringBuilder sb = new StringBuilder();
@@ -127,6 +126,10 @@ public class FSM implements Serializable {
             }
         }
 
+
+
         return sb.toString();
     }
+
+
 }
