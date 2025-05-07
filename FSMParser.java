@@ -142,21 +142,25 @@ public class FSMParser {
 
 
             case "TRANSITIONS":
-                if (parts.length == 1) {
-                    System.out.println("Error: TRANSITIONS command requires at least one transition.");
-                    break;
+                String input = command.substring("TRANSITIONS".length()).trim();
+
+                if (input.endsWith(";")) {
+                    input = input.substring(0, input.length() - 1).trim(); // sondaki ';' silinir
                 }
 
-                for (int i = 1; i < parts.length; i++) {
-                    String[] triple = parts[i].split(",");
-                    if (triple.length != 3) {
-                        System.out.println("Warning: Invalid transition format. ");
+                String[] transitionGroups = input.split(",");
+
+                for (String group : transitionGroups) {
+                    String[] partsInGroup = group.trim().split("\\s+");
+                    if (partsInGroup.length != 3) {
+                        System.out.println("Warning: Invalid transition format in '" + group.trim() +
+                                "'. Expected 3 elements: symbol fromState toState");
                         continue;
                     }
 
-                    char symbol = triple[0].trim().charAt(0);
-                    String fromStateName = triple[1].trim().toLowerCase();
-                    String toStateName = triple[2].trim().toLowerCase();
+                    char symbol = partsInGroup[0].trim().charAt(0);
+                    String fromStateName = partsInGroup[1].trim().toLowerCase();
+                    String toStateName = partsInGroup[2].trim().toLowerCase();
 
                     State from = new State(fromStateName);
                     State to = new State(toStateName);
