@@ -186,6 +186,12 @@ public class FSMParser {
                 System.out.println(fsm.execute(parts[1]));
                 break;
             default:
+                if (command.equals("PRINT") || command.equals("EXECUTE") || command.equals("LOG") ||
+                        command.equals("LOAD") || command.equals("COMPILE") ||
+                        command.equals("CLEAR") || command.equals("EXIT")) {
+                    // Bu komutlar sessizce yok sayılıyor veya başka bir yerde işleniyor olabilir
+                    break;
+                }
                 System.out.println("Error: Unknown command -> " + parts[0]);
                 System.out.println("Valid commands are: SYMBOLS, STATES, INITIAL-STATE, FINAL-STATES, EXECUTE");
                 break;
