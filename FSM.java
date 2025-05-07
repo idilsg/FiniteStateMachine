@@ -81,6 +81,8 @@ public class FSM implements Serializable {
         map.put(symbol, to);
     }
 
+
+
     // ----- FSM Çalıştırma -----
     public String execute(String input) {
         if (initialState == null) {
@@ -110,7 +112,6 @@ public class FSM implements Serializable {
             return sequence.toString() + " NO";
         }
     }
-
     // ----- Yazdırılabilir Açıklama -----
     public String describe() {
         StringBuilder sb = new StringBuilder();
@@ -127,6 +128,10 @@ public class FSM implements Serializable {
             }
         }
 
+
+
         return sb.toString();
     }
+
+
 }
