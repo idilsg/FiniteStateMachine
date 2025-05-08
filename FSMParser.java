@@ -203,12 +203,20 @@ public class FSMParser {
 
     public void loadFromFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
             StringBuilder buffer = new StringBuilder();
+            String line;
             while ((line = reader.readLine()) != null) {
-                buffer.append(line.trim());
-                if (line.trim().endsWith(";")) {
-                    processCommand(buffer.toString());
+                line = line.strip();
+                if (line.isEmpty() || line.startsWith(";")) continue; // boş ya da yorum satırı
+
+                String clean = line.split(";", 2)[0].trim(); // yorumdan arındır
+                if (!clean.isEmpty()) {
+                    buffer.append(clean).append(" ");
+                }
+
+
+                if (line.endsWith(";")) {
+                    processCommand(buffer.toString().trim());
                     buffer.setLength(0);
                 }
             }
@@ -217,4 +225,5 @@ public class FSMParser {
             System.out.println("Error while reading file: " + e.getMessage());
         }
     }
+
 }
