@@ -121,22 +121,33 @@ public class FSMParser {
                 if (input.endsWith(";")) {
                     input = input.substring(0, input.length() - 1).trim();
                 }
-                String[] groups = input.split("\\s*,\\s*");
+
+                if (input.endsWith(",") || input.matches(".*,[\\s;]*$")) {
+                    System.out.println("Error: unexpected comma or semicolon in transition list");
+                    break;
+                }
+
+                String[] groups = input.split(",");
                 for (String grp : groups) {
-                    String grpTrim = grp.trim();
-                    String[] elems = grpTrim.split("\\s+", 3);
-                    if (elems.length != 3) {
+                    grp = grp.trim();
+
+                    // 🔐 Güçlü kontrol: boş grup veya eksik eleman varsa hata
+                    String[] elems = grp.split("\\s+");
+                    if (elems.length != 3 || elems[0].isEmpty() || elems[1].isEmpty() || elems[2].isEmpty()) {
                         System.out.println("Error: unexpected comma or semicolon in transition list");
                         continue;
                     }
+
                     String symStr = elems[0].trim();
                     if (symStr.length() != 1 || !Character.isLetterOrDigit(symStr.charAt(0))) {
                         System.out.println("Error: invalid symbol " + symStr);
                         continue;
                     }
+
                     char symbol = symStr.charAt(0);
                     String fromName = elems[1].trim();
                     String toName = elems[2].trim();
+
                     if (!fromName.matches("[a-zA-Z0-9]+")) {
                         System.out.println("Error: invalid state " + fromName);
                         continue;
@@ -145,8 +156,10 @@ public class FSMParser {
                         System.out.println("Error: invalid state " + toName);
                         continue;
                     }
+
                     State from = new State(fromName.toLowerCase());
                     State to = new State(toName.toLowerCase());
+
                     if (!fsm.getStates().contains(from)) {
                         System.out.println("Error: State '" + fromName + "' is not defined.");
                         continue;
@@ -159,6 +172,7 @@ public class FSMParser {
                         System.out.println("Error: Symbol '" + symbol + "' is not defined.");
                         continue;
                     }
+
                     if (fsm.hasTransition(from, symbol)) {
                         State old = fsm.getTransition(from, symbol);
                         if (!old.equals(to)) {
@@ -166,6 +180,7 @@ public class FSMParser {
                                     "' and state '" + fromName + "', overriding previous.");
                         }
                     }
+
                     fsm.addTransition(symbol, from, to);
                 }
                 break;
