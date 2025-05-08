@@ -19,6 +19,17 @@ public class FSM implements Serializable {
         this.finalStates = new HashSet<>();
     }
 
+    // New helper methods for duplicate-checking in parser
+    public boolean hasTransition(State from, char symbol) {
+        Map<Character, State> map = transitions.get(from);
+        return map != null && map.containsKey(symbol);
+    }
+
+    public State getTransition(State from, char symbol) {
+        Map<Character, State> map = transitions.get(from);
+        return (map != null) ? map.get(symbol) : null;
+    }
+
     // ----- SYMBOL işlemleri -----
     public boolean addSymbol(char symbol) { // a,b,0,1
         if (!Character.isLetterOrDigit(symbol)) {
@@ -37,6 +48,7 @@ public class FSM implements Serializable {
         transitions.putIfAbsent(from, new HashMap<>());
         transitions.get(from).put(symbol, to);
     }
+
 
     public Set<Character> getSymbols() {
         return new HashSet<>(symbols); // dışarıya kopya ver
@@ -71,44 +83,20 @@ public class FSM implements Serializable {
         return finalStates;
     }
 
-    // ----- TRANSITION işlemleri -----
-    public void addTransition(State from, char symbol, State to) {
-        Map<Character, State> map = transitions.get(from);
-        if (map == null) {
-            map = new HashMap<>();
-            transitions.put(from, map);
-        }
-        map.put(symbol, to);
-    }
 
     // ----- FSM Çalıştırma -----
     public String execute(String input) {
-        if (initialState == null) {
-            return "Error: Initial state is not defined.";
+        if (initialState == null) return "Error: Initial state is not defined.";
+        State cur = initialState;
+        StringBuilder seq = new StringBuilder(cur.getName());
+        for (char c : input.toCharArray()) {
+            if (!symbols.contains(c))         return "Error: Invalid symbol " + c;
+            if (!hasTransition(cur, c))       return seq + " NO";
+            cur = getTransition(cur, c);
+            seq.append(" ").append(cur.getName());
         }
+        return finalStates.contains(cur) ? seq + " YES" : seq + " NO";
 
-        State currentState = initialState;
-        StringBuilder sequence = new StringBuilder(currentState.getName());
-
-        for (char symbol : input.toCharArray()) {
-            if (!symbols.contains(symbol)) {
-                return "Error: Invalid symbol " + symbol;
-            }
-
-            Map<Character, State> trans = transitions.get(currentState);
-            if (trans == null || !trans.containsKey(symbol)) {
-                return sequence.toString() + " NO";
-            }
-
-            currentState = trans.get(symbol);
-            sequence.append(" ").append(currentState.getName());
-        }
-
-        if (finalStates.contains(currentState)) {
-            return sequence.toString() + " YES";
-        } else {
-            return sequence.toString() + " NO";
-        }
     }
     // ----- Yazdırılabilir Açıklama -----
     public String describe() {

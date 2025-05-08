@@ -15,70 +15,57 @@ public class FSMParser {
 
     public void processCommand(String command) {
         command = command.trim();
+        if (command.isEmpty()) return;
 
+        String[] parts = command.split("\\s+", 2);
+        String keyword = parts[0].toUpperCase();
+        String arg = (parts.length > 1 ? parts[1].trim() : "");
 
-        String[] parts = command.split(" ");
-
-        switch (parts[0].toUpperCase()) {
+        switch (keyword) {
             case "SYMBOLS":
-                // if no symbols are provided, print the existing symbol list
-                if (parts.length == 1) {
+                if (arg.isEmpty()) {
                     System.out.println("Current Symbols: " + fsm.describeSymbols());
                     break;
                 }
 
-                // loop each symbol argument
-                for (int i = 1; i < parts.length; i++) {
-                    char symbol = parts[i].charAt(0); // get the first character of each entry
+                String[] symbolParts = arg.split("\\s+");
+                for (String symStr : symbolParts) {
+                    if (symStr.length() != 1) {
+                        System.out.println("Warning: Symbol '" + symStr + "' ignored (length must be 1)");
+                        continue;
+                    }
 
-                    // if symbol is alphanumeric (letters and digits only)
+                    char symbol = symStr.charAt(0);
                     if (!Character.isLetterOrDigit(symbol)) {
                         System.out.println("Warning: Invalid symbol '" + symbol + "' ignored (non-alphanumeric)");
-                    }
-                    // try to add the symbol in lowercase (case-insensitive check)
-                    else if (!fsm.getSymbols().add(Character.valueOf(Character.toLowerCase(symbol)))) {
+                    } else if (!fsm.addSymbol(Character.toLowerCase(symbol))) {
                         System.out.println("Warning: Duplicate symbol '" + symbol + "'");
                     }
                 }
                 break;
 
             case "STATES":
-                // if no states provided, print all current states and mark initial/final
-                if (parts.length == 1) {
-                    // STATES q0 q1 olduğunda, parts[0] = STATES oluyor
-                    // o yüzden parts[1] ile başlıyoruz
-
+                if (arg.isEmpty()) {
                     System.out.println("Current States:");
-
-                    // convert the set to a list and sort alphabetically by state name
-                    List<State> sortedStates = new ArrayList<>(fsm.getStates());
-                    sortedStates.sort(Comparator.comparing(State::getName));
-
-                    for (State s : sortedStates) { // loop through each state already stored in FSM
-                        String tag = ""; // tag = initial veya final
+                    List<State> list = new ArrayList<>(fsm.getStates());
+                    list.sort(Comparator.comparing(State::getName));
+                    for (State s : list) {
+                        String tag = "";
                         if (s.equals(fsm.getInitialState())) tag += " [initial]";
                         if (fsm.getFinalStates().contains(s)) tag += " [final]";
                         System.out.println("  " + s.getName() + tag);
                     }
-                    break;
-                }
-
-                for (int i = 1; i < parts.length; i++) {
-                    String name = parts[i];
-                    // check if alphanumeric
-                    if (!name.matches("[a-zA-Z0-9]+")) {
-                        System.out.println("Warning: Invalid state name '" + name + "' (must be alphanumeric)");
-                        continue;
-                    }
-
-                    State newState = new State(name.toLowerCase());
-                    // Check for duplicates
-                    if (!fsm.getStates().add(newState)) {
-                        System.out.println("Warning: Duplicate state '" + name + "' already declared");
-                    } else {
-                        // First added state becomes initial state if none is set
-                        if (fsm.getInitialState() == null) {
-                            fsm.setInitialState(newState);
+                } else {
+                    for (String name : arg.split("\\s+")) {
+                        if (!name.matches("[a-zA-Z0-9]+")) {
+                            System.out.println("Warning: Invalid state name '" + name + "'");
+                            continue;
+                        }
+                        State st = new State(name.toLowerCase());
+                        if (!fsm.getStates().add(st)) {
+                            System.out.println("Warning: Duplicate state '" + name + "'");
+                        } else if (fsm.getInitialState() == null) {
+                            fsm.setInitialState(st);
                         }
                     }
                 }
@@ -91,17 +78,12 @@ public class FSMParser {
                 }
 
                 String initName = parts[1];
-
-                // check if name is alphanumeric
                 if (!initName.matches("[a-zA-Z0-9]+")) {
                     System.out.println("Warning: Invalid state name '" + initName + "' (must be alphanumeric)");
                     break;
                 }
 
-
                 State initState = new State(initName.toLowerCase());
-
-                // if the state does not exist yet, add it with a warning
                 if (!fsm.getStates().contains(initState)) {
                     fsm.addState(initState);
                     System.out.println("Warning: State '" + initName + "' was not declared before. It has been added.");
@@ -116,68 +98,74 @@ public class FSMParser {
                     break;
                 }
 
-                for (int i = 1; i < parts.length; i++) {
-                    String name = parts[i];
-
-                    // check if name is alphanumeric
+                for (String name : arg.split("\\s+")) {
                     if (!name.matches("[a-zA-Z0-9]+")) {
                         System.out.println("Warning: Invalid state name '" + name + "' (must be alphanumeric)");
                         continue;
                     }
 
                     State state = new State(name.toLowerCase());
-
-                    // add to FSM if not declared
                     if (!fsm.getStates().contains(state)) {
                         fsm.addState(state);
                         System.out.println("Warning: State '" + name + "' was not declared before. It has been added.");
                     }
 
-                    // warn if already a final state
                     if (!fsm.getFinalStates().add(state)) {
                         System.out.println("Warning: State '" + name + "' is already a final state.");
                     }
                 }
                 break;
 
-
             case "TRANSITIONS":
-                String input = command.substring("TRANSITIONS".length()).trim();
-
+                String input = arg;
                 if (input.endsWith(";")) {
-                    input = input.substring(0, input.length() - 1).trim(); // sondaki ';' silinir
+                    input = input.substring(0, input.length() - 1).trim();
                 }
-
-                String[] transitionGroups = input.split(",");
-
-                for (String group : transitionGroups) {
-                    String[] partsInGroup = group.trim().split("\\s+");
-                    if (partsInGroup.length != 3) {
-                        System.out.println("Warning: Invalid transition format in '" + group.trim() +
-                                "'. Expected 3 elements: symbol fromState toState");
+                String[] groups = input.split("\\s*,\\s*");
+                for (String grp : groups) {
+                    String grpTrim = grp.trim();
+                    String[] elems = grpTrim.split("\\s+", 3);
+                    if (elems.length != 3) {
+                        System.out.println("Error: unexpected comma or semicolon in transition list");
                         continue;
                     }
-
-                    char symbol = partsInGroup[0].trim().charAt(0);
-                    String fromStateName = partsInGroup[1].trim().toLowerCase();
-                    String toStateName = partsInGroup[2].trim().toLowerCase();
-
-                    State from = new State(fromStateName);
-                    State to = new State(toStateName);
-
+                    String symStr = elems[0].trim();
+                    if (symStr.length() != 1 || !Character.isLetterOrDigit(symStr.charAt(0))) {
+                        System.out.println("Error: invalid symbol " + symStr);
+                        continue;
+                    }
+                    char symbol = symStr.charAt(0);
+                    String fromName = elems[1].trim();
+                    String toName = elems[2].trim();
+                    if (!fromName.matches("[a-zA-Z0-9]+")) {
+                        System.out.println("Error: invalid state " + fromName);
+                        continue;
+                    }
+                    if (!toName.matches("[a-zA-Z0-9]+")) {
+                        System.out.println("Error: invalid state " + toName);
+                        continue;
+                    }
+                    State from = new State(fromName.toLowerCase());
+                    State to = new State(toName.toLowerCase());
                     if (!fsm.getStates().contains(from)) {
-                        System.out.println("Error: State '" + fromStateName + "' is not defined.");
+                        System.out.println("Error: State '" + fromName + "' is not defined.");
                         continue;
                     }
                     if (!fsm.getStates().contains(to)) {
-                        System.out.println("Error: State '" + toStateName + "' is not defined.");
+                        System.out.println("Error: State '" + toName + "' is not defined.");
                         continue;
                     }
                     if (!fsm.getSymbols().contains(symbol)) {
                         System.out.println("Error: Symbol '" + symbol + "' is not defined.");
                         continue;
                     }
-
+                    if (fsm.hasTransition(from, symbol)) {
+                        State old = fsm.getTransition(from, symbol);
+                        if (!old.equals(to)) {
+                            System.out.println("Warning: multiple transitions for symbol '" + symbol +
+                                    "' and state '" + fromName + "', overriding previous.");
+                        }
+                    }
                     fsm.addTransition(symbol, from, to);
                 }
                 break;
@@ -185,11 +173,11 @@ public class FSMParser {
             case "EXECUTE":
                 System.out.println(fsm.execute(parts[1]));
                 break;
+
             default:
                 if (command.equals("PRINT") || command.equals("EXECUTE") || command.equals("LOG") ||
                         command.equals("LOAD") || command.equals("COMPILE") ||
                         command.equals("CLEAR") || command.equals("EXIT")) {
-                    // Bu komutlar sessizce yok sayılıyor veya başka bir yerde işleniyor olabilir
                     break;
                 }
                 System.out.println("Error: Unknown command -> " + parts[0]);
@@ -201,8 +189,13 @@ public class FSMParser {
     public void loadFromFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
+            StringBuilder buffer = new StringBuilder();
             while ((line = reader.readLine()) != null) {
-                processCommand(line.trim());
+                buffer.append(line.trim());
+                if (line.trim().endsWith(";")) {
+                    processCommand(buffer.toString());
+                    buffer.setLength(0);
+                }
             }
             System.out.println("File successfully loaded: " + filePath);
         } catch (IOException e) {
