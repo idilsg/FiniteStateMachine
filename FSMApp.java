@@ -9,7 +9,7 @@ public class FSMApp {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        // başlangıç mesajı
+        // start message
         System.out.println("FSM DESIGNER " + VERSION + " - " + now.format(formatter));
 
         Scanner scanner = new Scanner(System.in);

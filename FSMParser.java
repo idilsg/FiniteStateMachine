@@ -17,7 +17,6 @@ public class FSMParser {
     public void processCommand(String command) {
         command = command.trim();
 
-
         String[] parts = command.split(" ");
 
         switch (parts[0].toUpperCase()) {
@@ -99,7 +98,6 @@ public class FSMParser {
                     break;
                 }
 
-
                 State initState = new State(initName.toLowerCase());
 
                 // if the state does not exist yet, add it with a warning
@@ -140,7 +138,6 @@ public class FSMParser {
                     }
                 }
                 break;
-
 
             case "TRANSITIONS":
                 String input = command.substring("TRANSITIONS".length()).trim();
@@ -187,11 +184,10 @@ public class FSMParser {
                 }
                 break;
 
-
-
             case "EXECUTE":
                 System.out.println(fsm.execute(parts[1]));
                 break;
+
             default:
                 if (command.equals("PRINT") || command.equals("EXECUTE") || command.equals("LOG") ||
                         command.equals("LOAD") || command.equals("COMPILE") ||

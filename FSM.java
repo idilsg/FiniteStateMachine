@@ -26,6 +26,7 @@ public class FSM implements Serializable {
         Map<Character, State> map = transitions.get(from);
         return map != null && map.containsKey(symbol);
     }
+
     // Returns the target state for a given transition
     public State getTransition(State from, char symbol) {
         Map<Character, State> map = transitions.get(from);
@@ -39,6 +40,7 @@ public class FSM implements Serializable {
         }
         return symbols.add(Character.toLowerCase(symbol));  // küçük harf olarak ekleniyor
     }
+
     // transitionda varlık kontrolü için gerekti
     public void addTransition(char symbol, State from, State to) {
         if (!symbols.contains(symbol)) {
@@ -55,6 +57,7 @@ public class FSM implements Serializable {
     public Set<Character> getSymbols() {
         return new HashSet<>(symbols); // dışarıya kopya ver
     }
+
     // Returns sorted symbol list as a space-separated string
     public String describeSymbols() {
         List<Character> sortedSymbols = new ArrayList<>(symbols);
@@ -91,7 +94,6 @@ public class FSM implements Serializable {
         return finalStates;
     }
 
-
     // ----- FSM Çalıştırma -----
     public String execute(String input) {
         if (initialState == null) return "Error: Initial state is not defined.";
@@ -104,12 +106,13 @@ public class FSM implements Serializable {
             seq.append(" ").append(cur.getName());
         }
         return finalStates.contains(cur) ? seq + " YES" : seq + " NO";
-
     }
+
     // Removes leading/trailing and excessive internal whitespace
     public static String normalizeWhitespace(String input) {
         return input.trim().replaceAll("\\s+", " ");
     }
+
     // ----- Yazdırılabilir Açıklama -----
     public String describe() {
         StringBuilder sb = new StringBuilder();
@@ -125,11 +128,6 @@ public class FSM implements Serializable {
                         .append(" --> ").append(entry.getValue()).append("\n");
             }
         }
-
-
-
         return sb.toString();
     }
-
-
 }
