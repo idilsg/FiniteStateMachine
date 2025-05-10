@@ -5,6 +5,7 @@ import java.util.*;
 
 
 // implements Serializabledeki amaç :  Nesne dosyaya yazılabilir (save/load yapılabilir)
+// Implements Serializable to allow saving/loading FSM objects to/from files
 public class FSM implements Serializable {
     private Set<State> states;                      // Durumlar kümesi
     private Set<Character> symbols;                 // Semboller kümesi
@@ -20,11 +21,12 @@ public class FSM implements Serializable {
     }
 
     // New helper methods for duplicate-checking in parser
+    // Checks if a transition exists from a given state with a given symbol
     public boolean hasTransition(State from, char symbol) {
         Map<Character, State> map = transitions.get(from);
         return map != null && map.containsKey(symbol);
     }
-
+    // Returns the target state for a given transition
     public State getTransition(State from, char symbol) {
         Map<Character, State> map = transitions.get(from);
         return (map != null) ? map.get(symbol) : null;
@@ -49,11 +51,11 @@ public class FSM implements Serializable {
         transitions.get(from).put(symbol, to);
     }
 
-
+    // Returns a copy of the symbol set
     public Set<Character> getSymbols() {
         return new HashSet<>(symbols); // dışarıya kopya ver
     }
-
+    // Returns sorted symbol list as a space-separated string
     public String describeSymbols() {
         List<Character> sortedSymbols = new ArrayList<>(symbols);
         sortedSymbols.sort(Comparator.naturalOrder());
@@ -104,7 +106,7 @@ public class FSM implements Serializable {
         return finalStates.contains(cur) ? seq + " YES" : seq + " NO";
 
     }
-
+    // Removes leading/trailing and excessive internal whitespace
     public static String normalizeWhitespace(String input) {
         return input.trim().replaceAll("\\s+", " ");
     }
