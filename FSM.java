@@ -43,7 +43,13 @@ public class FSM implements Serializable {
     }
 
     public String describeSymbols() {
-        return symbols.toString();
+        List<Character> sortedSymbols = new ArrayList<>(symbols);
+        sortedSymbols.sort(Comparator.naturalOrder());
+        StringBuilder sb = new StringBuilder();
+        for (char c : sortedSymbols) {
+            sb.append(c).append(" ");
+        }
+        return sb.toString().trim(); // remove trailing space
     }
 
     // ----- STATE işlemleri -----
@@ -109,6 +115,10 @@ public class FSM implements Serializable {
         } else {
             return sequence.toString() + " NO";
         }
+    }
+
+    public static String normalizeWhitespace(String input) {
+        return input.trim().replaceAll("\\s+", " ");
     }
     // ----- Yazdırılabilir Açıklama -----
     public String describe() {

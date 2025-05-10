@@ -21,7 +21,7 @@ public class FSMApp {
         // if started with an argument load the file
         if (args.length > 0) {
             String inputFile = args[0];
-            if (inputFile.endsWith(".bin")) {
+            if (inputFile.endsWith(".bin")|| inputFile.endsWith(".fs")) {
                 FSM loaded = FSMFileManager.loadFSM(inputFile);
                 if (loaded != null) {
                     fsm = loaded;
@@ -36,27 +36,33 @@ public class FSMApp {
 
         while (true) {
             System.out.print("? ");
-            String input = scanner.nextLine().trim();
-            if (!input.endsWith(";")) {
+            String rawInput = scanner.nextLine().trim();
+
+            // Normalize whitespace (convert tabs/multiple spaces to single space)
+            rawInput = FSM.normalizeWhitespace(rawInput);
+
+            // Only process up to first semicolon
+            int semicolonIndex = rawInput.indexOf(';');
+            if (semicolonIndex == -1) {
                 System.out.println("Error: Command must end with ';'");
                 continue;
             }
-            // Boş input kontrolü
-            if (input.isEmpty()) {
+
+            String cleanCommand = rawInput.substring(0, semicolonIndex).trim();
+            if (cleanCommand.isEmpty()) {
                 continue;
             }
+            //input = input.split(";")[0].trim();
 
-            // Noktalı virgül sonrası temizle
-            input = input.split(";")[0].trim();
 
             try {
-                if (input.equalsIgnoreCase("EXIT")) {
+                if (cleanCommand.equalsIgnoreCase("EXIT")) {
                     System.out.println("TERMINATED BY USER");
                     logger.stopLogging();
                     break;
                 }
 
-                if (input.equalsIgnoreCase("HELP")) {
+                if (cleanCommand.equalsIgnoreCase("HELP")) {
                     System.out.println("Available commands:");
                     System.out.println("  SYMBOLS [symbol1 symbol2 ...]");
                     System.out.println("  STATES [state1 state2 ...]");
@@ -73,8 +79,8 @@ public class FSMApp {
                     continue;
                 }
 
-                if (input.startsWith("LOG ")) {
-                    String[] parts = input.split(" ");
+                if (cleanCommand.startsWith("LOG ")) {
+                    String[] parts = cleanCommand.split(" ");
                     if (parts.length == 2) {
                         logger.startLogging(parts[1]);
                     } else {
@@ -83,8 +89,8 @@ public class FSMApp {
                     continue;
                 }
 
-                if (input.startsWith("EXECUTE ")) {
-                    String[] parts = input.split(" ");
+                if (cleanCommand.startsWith("EXECUTE ")) {
+                    String[] parts = cleanCommand.split(" ");
                     if (parts.length == 2) {
                         String result = runner.run(parts[1]);
                         System.out.println(result);
@@ -95,19 +101,19 @@ public class FSMApp {
                     continue;
                 }
 
-                if (input.startsWith("COMPILE ")) {
-                    String[] parts = input.split(" ");
+                if (cleanCommand.startsWith("COMPILE ")) {
+                    String[] parts = cleanCommand.split(" ");
                     if (parts.length == 2) {
                         FSMFileManager.compileFSM(fsm, parts[1]);
                     } else {
-                        System.out.println("Error: Invalid COMPILE command. Usage: COMPILE filename.bin");
+                        System.out.println("Error: Invalid COMPILE command.");
                     }
                     continue;
                 }
 
                 // Diğer her şey FSMParser'a gönderiliyor
-                parser.processCommand(input);
-                logger.log(input);
+                parser.processCommand(cleanCommand);
+                logger.log(cleanCommand);
 
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());

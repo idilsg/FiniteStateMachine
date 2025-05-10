@@ -1,4 +1,5 @@
 //Kullanıcının girdiği komutları ayrıştıran ve yorumlayan sınıf.
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class FSMParser {
                         System.out.println("Warning: Invalid symbol '" + symbol + "' ignored (non-alphanumeric)");
                     }
                     // try to add the symbol in lowercase (case-insensitive check)
-                    else if (!fsm.getSymbols().add(Character.valueOf(Character.toLowerCase(symbol)))) {
+                    if (!fsm.addSymbol(Character.toLowerCase(symbol))) {
                         System.out.println("Warning: Duplicate symbol '" + symbol + "'");
                     }
                 }
@@ -151,9 +152,13 @@ public class FSMParser {
                 String[] transitionGroups = input.split(",");
 
                 for (String group : transitionGroups) {
-                    String[] partsInGroup = group.trim().split("\\s+");
+                    // 👇👇👇 Fazla boşlukları temizle
+                    group = group.trim().replaceAll("\\s+", " ");
+
+                    String[] partsInGroup = group.split(" ");
+
                     if (partsInGroup.length != 3) {
-                        System.out.println("Warning: Invalid transition format in '" + group.trim() +
+                        System.out.println("Warning: Invalid transition format in '" + group +
                                 "'. Expected 3 elements: symbol fromState toState");
                         continue;
                     }
@@ -181,6 +186,8 @@ public class FSMParser {
                     fsm.addTransition(symbol, from, to);
                 }
                 break;
+
+
 
             case "EXECUTE":
                 System.out.println(fsm.execute(parts[1]));
